@@ -1,0 +1,12 @@
+# Ignore built distributions
+dist/
+build/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Poetry lock file (optional)
+poetry.lock
