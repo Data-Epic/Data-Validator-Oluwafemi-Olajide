@@ -29,9 +29,9 @@ pip install DataValidityCheck
 ## Usage
 First, import the `DataValidator` class:
 ```python
-from DataValidityCheck.validate_info_data import DataValidator
+from DataValidityCheck import DataValidator
 
-validator = DataValidator()
+vd = DataValidator()
 ```
 
 ### Email Validation

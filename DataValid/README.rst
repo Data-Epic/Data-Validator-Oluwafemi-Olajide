@@ -51,9 +51,9 @@ First, import the ``DataValidator`` class:
 
 .. code:: python
 
-   from DataValidityCheck.validate_info_data import DataValidator
+   from DataValidityCheck import DataValidator
 
-   validator = DataValidator()
+   vd = DataValidator()
 
 Email Validation
 ~~~~~~~~~~~~~~~~
@@ -104,7 +104,7 @@ Ensure you run tests before submitting:
 Author
 ------
 
-- Main Maintainer: Olajide Oluwafemi Richard
+Olajide Oluwafemi Richard
 
 License
 -------
