@@ -1,54 +1,90 @@
 import re
+from datetime import datetime
 
 class DataValidator:
-    """
-    A class for validating personal data such as emails, phone numbers, dates, and URLs.
-    """
+    """A class to validate emails, phone numbers, dates, and URLs."""
 
-    def validate_email(self, email: str) -> bool:
+    @staticmethod
+    def validate_email(email: str) -> str:
         """
-        Validates an email address.
+        Validates an email address and returns a descriptive message.
 
         - Supports:
-           -Standard email format (e.g., "user@example.com").
+          - Standard email format (e.g., "user@example.com").
         - Rejects:
-           -Missing '@' or domain (e.g., "userexample.com").
-           -Invalid characters.
-           -Domains without extensions (e.g., "user@domain").
+          - Missing '@' or domain (e.g., "userexample.com").
+          - Invalid characters.
+          - Domains without extensions (e.g., "user@domain").
+          - Too short or too long emails.
         
         :param email: The email address to validate.
-        :return: True if valid, False otherwise.
+        :return: A message indicating validity or the reason for invalidity.
         """
-        pattern = r"^[a-zA-Z0-9._+-]+@[a-zA-Z.-]+\.[a-zA-Z]{2,}$"
-        return bool(re.match(pattern, email))
+        if not email.strip():
+            return "Email field cannot be empty."
+                
+        if len(email) > 320:
+            return "Email is too long. It must not exceed 320 characters."
+        
+        email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+        if not re.match(email_pattern, email):
+            return "Invalid email format. Ensure it follows the pattern 'example@domain.com'."
+        
+        return "Valid email address."
 
-    def validate_phone(self, phone: str) -> bool:
+    @staticmethod
+    def validate_phone(phone: str) -> str:
         """
-        Validates phone numbers:
-        - Supports international format (e.g., +2348012345678, +12345678901).
-        - Supports Nigerian local format (e.g., 08012345678).
-        - No spaces or hyphens allowed.
-        """
-        pattern = r"^(?:\+(\d{1,4})|0)(\d{10})$"
-        return bool(re.match(pattern, phone))
+        Validates phone numbers and returns a descriptive message.
 
-    def validate_date(self, date: str) -> bool:
+        - Supports:
+          - International format (e.g., +2348012345678, +12345678901).
+          - Nigerian local format (e.g., 08012345678).
+        - Rejects:
+          - Missing country code (if international).
+          - Incorrect number length.
+        
+        :param phone: The phone number to validate.
+        :return: A message indicating validity or the reason for invalidity.
         """
-        Validates a date in DD/MM/YYYY format with proper day-month matching.
+        if not phone.strip():
+            return "Phone number cannot be empty."
+
+        phone_pattern = r"^\+?\d{7,15}$"  # Supports international format +1234567890
+        if not re.match(phone_pattern, phone):
+            return "Invalid phone number format. Use a valid local or international format."
+        
+        return "Valid phone number!"
+
+    @staticmethod
+    def validate_date(date: str) -> str:
+        """
+        Validates a date in DD/MM/YYYY format and returns a descriptive message.
+
         - Ensures day (01-31) fits the month.
         - Enforces a four-digit year.
+        
+        :param date: The date string to validate.
+        :return: A message indicating validity or the reason for invalidity.
         """
-        pattern = r"""^(
-            (0[1-9]|1\d|2[0-8])/(0[1-9]|1[0-2])/\d{4} |  # Days 01-28 (all months)
-            (29/(0[13-9]|1[0-2])/\d{4}) |  # 29th day (all months except February)
-            (30/(0[13-9]|1[0-2])/\d{4}) |  # 30th day (only valid in months with 30+ days)
-            (31/(0[13578]|1[02])/\d{4}) |  # 31st day (only in Jan, Mar, May, Jul, Aug, Oct, Dec)
-        )$"""
-        return bool(re.match(pattern, date, re.VERBOSE))
+        if not date.strip():
+            return "Date field cannot be empty."
 
-    def validate_url(self, url: str) -> bool:
+        date_pattern = r"^\d{2}/\d{2}/\d{4}$"
+        if not re.match(date_pattern, date):
+            return "Invalid date format."
+
+        try:
+            day, month, year = map(int, date.split('/'))
+            datetime(year, month, day)  # Validates real dates
+            return "Valid date"
+        except ValueError:
+            return "Invalid date format."
+
+    @staticmethod
+    def validate_url(url: str) -> str:
         """
-        Validates a URL.
+        Validates a URL and returns a descriptive message.
 
         - Supports:
           - "http://", "https://", and "www." formats.
@@ -59,10 +95,23 @@ class DataValidator:
           - Invalid characters in the domain.
 
         :param url: The URL to validate.
-        :return: True if valid, False otherwise.
+        :return: A message indicating validity or the reason for invalidity.
         """
-        pattern = r"^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?(\/\S*)?$"
-        return bool(re.match(pattern, url))
+        if not url.strip():
+            return "URL field cannot be empty."
+
+        url_pattern = (
+            r"^(https?:\/\/)?"  # Optional http or https
+            r"(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6})"  # Domain name
+            r"(:\d{1,5})?"  # Optional port
+            r"(\/[^\s]*)?$"  # Optional path
+        )
+        if not re.match(url_pattern, url):
+            return "Invalid URL format. Ensure it starts with 'http://' or 'https://'."
+        
+        return "Valid URL."
+
+
 
 
 if __name__ == "__main__":
@@ -80,23 +129,23 @@ if __name__ == "__main__":
 
         if choice == "1":
             email = input("Enter an email address: ")
-            print("Valid Email " if validator.validate_email(email) else "Invalid Email ")
+            print(validator.validate_email(email))
 
         elif choice == "2":
             phone = input("Enter a phone number: ")
-            print("Valid Phone Number " if validator.validate_phone(phone) else "Invalid Phone Number ")
+            print(validator.validate_phone(phone))
 
         elif choice == "3":
             date = input("Enter a date (DD/MM/YYYY): ")
-            print("Valid Date " if validator.validate_date(date) else "Invalid Date ")
+            print(validator.validate_date(date))
 
         elif choice == "4":
             url = input("Enter a URL: ")
-            print("Valid URL " if validator.validate_url(url) else "Invalid URL ")
+            print(validator.validate_url(url))
 
         elif choice == "5":
-            print("Exiting program. Goodbye! ")
+            print("Exiting program. Goodbye! 👋👋👋")
             break
 
         else:
-            print("Invalid choice. Please enter a number between 1 and 5.")
+            print("❌ Invalid choice. Please enter a number between 1 and 5.")

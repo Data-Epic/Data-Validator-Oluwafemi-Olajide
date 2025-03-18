@@ -22,6 +22,7 @@ Table of Contents
   - `URL Validation <#url-validation>`__
 
 - `Contributing <#contributing>`__
+- `Author <#author>`__
 - `License <#license>`__
 
 Installation
@@ -36,13 +37,14 @@ To install **DataValidityCheck**, use:
 Features
 --------
 
-- **Email Validation**: Ensures a valid email format.
+- **Email Validation**: Ensures a valid email format with proper domain
+  structure.
 - **Phone Number Validation**: Supports Nigerian phone numbers in local
   and international formats.
 - **Date Validation**: Validates dates in the ``DD/MM/YYYY`` format,
   including leap years.
 - **URL Validation**: Checks for valid domain structures, including
-  ``http``, ``https``, and ``www`` prefixes.
+  ``http://``, ``https://``, and ``www.`` prefixes.
 
 Usage
 -----
@@ -53,40 +55,40 @@ First, import the ``DataValidator`` class:
 
    from DataValidityCheck import DataValidator
 
-   vd = DataValidator()
+   validator = DataValidator()
 
 Email Validation
 ~~~~~~~~~~~~~~~~
 
 .. code:: python
 
-   print(validator.validate_email("user@example.com"))  # True
-   print(validator.validate_email("invalid-email"))  # False
+   print(validator.validate_email("user@example.com"))  # Valid email address
+   print(validator.validate_email("invalid-email"))  # Invalid email format, ensure it follows example "example@domain.com."
 
 Phone Number Validation
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
-   print(validator.validate_phone("08123456789"))  # True
-   print(validator.validate_phone("+2348123456789"))  # True
-   print(validator.validate_phone("123456"))  # False
+   print(validator.validate_phone("08123456789"))  # Valid phone number
+   print(validator.validate_phone("+2348123456789"))  # Valid phone number
+   print(validator.validate_phone("123456"))  # Invalid phone number format
 
 Date Validation
 ~~~~~~~~~~~~~~~
 
 .. code:: python
 
-   print(validator.validate_date("29/02/2024"))  # True (Leap year)
-   print(validator.validate_date("31/04/2023"))  # False (April has 30 days)
+   print(validator.validate_date("29/02/2024"))  # Valid date (Leap year)
+   print(validator.validate_date("31/04/2023"))  # Invalid date (April has 30 days)
 
 URL Validation
 ~~~~~~~~~~~~~~
 
 .. code:: python
 
-   print(validator.validate_url("https://www.google.com"))  # True
-   print(validator.validate_url("htp://invalid.com"))  # False
+   print(validator.validate_url("https://www.google.com"))  # Valid URL
+   print(validator.validate_url("htp://invalid.com"))  # Invalid URL format
 
 Contributing
 ------------
@@ -104,7 +106,7 @@ Ensure you run tests before submitting:
 Author
 ------
 
-Olajide Oluwafemi Richard
+**Olajide Oluwafemi Richard**
 
 License
 -------

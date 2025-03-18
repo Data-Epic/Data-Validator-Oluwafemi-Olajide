@@ -1,6 +1,6 @@
 [project]
 name = "DataValidityCheck"
-version = "0.0.2"
+version = "0.0.4"
 description = "A Python package for validating various types of data."
 authors = [{ name = "Olajide Oluwafemi", email = "olajiderichard44@gmail.com" }]
 license = "MIT"

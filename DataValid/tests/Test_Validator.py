@@ -1,35 +1,54 @@
+import pytest
 from DataValidityCheck import __version__
 from DataValidityCheck.validate_info_data import DataValidator
 
 def test_version():
-	assert __version__ == "0.0.1"
+	assert __version__ == "0.0.4"
 
 
 validator = DataValidator()
 
-def test_validate_email():
-    assert validator.validate_email("test@example.com") == True
-    assert validator.validate_email("user.name@domain.com") == True
-    assert validator.validate_email("invalid-email.com") == False
-    assert validator.validate_email("user@com") == False
 
-def test_validate_phone():
-    assert validator.validate_phone("+2348012345678") == True
-    assert validator.validate_phone("08012345678") == True
-    assert validator.validate_phone("081 234 5678") == False
-    assert validator.validate_phone("+12345678901") == False
+@pytest.mark.parametrize("email, expected", [
+    ("", "Email field cannot be empty."),
+    ("verylongemail" + "a" * 310 + "@example.com", "Email is too long. It must not exceed 320 characters."),
+    ("plainaddress", "Invalid email format. Ensure it follows the pattern 'example@domain.com'."),
+    ("user@domain", "Invalid email format. Ensure it follows the pattern 'example@domain.com'."),
+    ("user@domain.com", "Valid email address."),
+])
+def test_validate_email(email, expected):
+    assert validator.validate_email(email) == expected
 
-def test_validate_date():
-    assert validator.validate_date("29/02/2024") == True  # Leap year
-    assert validator.validate_date("31/04/2025") == False  # April has 30 days
-    assert validator.validate_date("30/02/2025") == False  # Feb max is 29
-    assert validator.validate_date("15/08/2023") == True  # Valid date
 
-def test_validate_url():
-    assert validator.validate_url("https://www.google.com") == True
-    assert validator.validate_url("http://example.org") == True
-    assert validator.validate_url("htp://invalid.com") == False
-    assert validator.validate_url("www.missinghttp.com") == True
+@pytest.mark.parametrize("phone, expected", [
+    ("", "Phone number cannot be empty."),
+    ("12345", "Invalid phone number format. Use a valid local or international format."),
+    ("+1234567890123456", "Invalid phone number format. Use a valid local or international format."),
+    ("+2348012345678", "Valid phone number!"),
+    ("08012345678", "Valid phone number!"),
+])
+def test_validate_phone(phone, expected):
+    assert validator.validate_phone(phone) == expected
 
-if __name__ == "__main__":
-    pytest.main()
+
+@pytest.mark.parametrize("date, expected", [
+    ("", "Date field cannot be empty."),
+    ("32/01/2023", "Invalid date format."),
+    ("31/04/2023", "Invalid date format."),  # April has only 30 days
+    ("29/02/2023", "Invalid date format."),  # 2023 is not a leap year
+    ("15/08/2023", "Valid date"),
+])
+def test_validate_date(date, expected):
+    assert validator.validate_date(date) == expected
+
+
+@pytest.mark.parametrize("url, expected", [
+    ("", "URL field cannot be empty."),
+    ("google", "Invalid URL format. Ensure it starts with 'http://' or 'https://'."),
+    ("htp://invalid.com", "Invalid URL format. Ensure it starts with 'http://' or 'https://'."),
+    ("www.domain.org", "Valid URL."),
+    ("https://www.google.com", "Valid URL."),
+    ("http://example.com", "Valid URL."),
+])
+def test_validate_url(url, expected):
+    assert validator.validate_url(url) == expected
